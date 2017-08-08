@@ -12,7 +12,7 @@ public class Country extends DataSupport {
     //记录县所对应的天气代码
     private String weatherId;
     //记录所属城市的ID
-    private String cityId;
+    private int cityId;
 
     public int getId() {
         return id;
@@ -38,11 +38,11 @@ public class Country extends DataSupport {
         this.weatherId = weatherId;
     }
 
-    public String getCityId() {
+    public int getCityId() {
         return cityId;
     }
 
-    public void setCityId(String cityId) {
+    public void setCityId(int cityId) {
         this.cityId = cityId;
     }
 
