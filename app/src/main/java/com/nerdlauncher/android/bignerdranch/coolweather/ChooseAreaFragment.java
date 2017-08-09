@@ -1,8 +1,11 @@
 package com.nerdlauncher.android.bignerdranch.coolweather;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -87,10 +90,26 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
                 }else if(currentLevel==LEVEL_COUNTY){
                     String weatherId=countryList.get(position).getWeatherId();
-                    Intent intent=new Intent(getActivity(),WeatherActivity.class);
-                    intent.putExtra("weather_id",weatherId);
-                    startActivity(intent);
-                    getActivity().finish();
+                    //debug
+                    //
+                    SharedPreferences.Editor editor=PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
+                    editor.putString("selectWeatherID",weatherId);
+                    editor.apply();
+
+
+                    //如果当前碎片在mainactivity中，处理逻辑不变
+                    if(getActivity() instanceof MainActivity) {
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id", weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                        //如果已经进入到天气详情页，碎片在weatherActivity中打开，则关闭滑动菜单，显示下拉刷新进度，重新请求新天气
+                    }else if(getActivity() instanceof WeatherActivity){
+                        WeatherActivity activity= (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
                 }
             }
         });
